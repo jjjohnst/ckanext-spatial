@@ -429,6 +429,13 @@ class ISODocument(MappedXmlDocument):
             multiplicity="1",
         ),
         ISOElement(
+            name="format",
+            search_paths=[
+                "gmd:distributionInfo/gmd:MD_Distribution/gmd:distributionFormat/gmd:MD_Format/gmd:name/gco:CharacterString/text()",
+            ],
+            multiplicity="0..1",
+        ),
+        ISOElement(
             name="alternative-title",
             search_paths=[
                 "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:alternativeTitle/gco:CharacterString/text()",
