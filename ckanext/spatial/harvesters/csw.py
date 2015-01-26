@@ -89,7 +89,7 @@ class CSWHarvester(SpatialHarvester, SingletonPlugin):
         log.debug('Starting gathering for %s' % url)
         guids_in_harvest = set()
         try:
-            for identifier in self.csw.getidentifiers(page=1000, outputschema=self.output_schema()):
+            for identifier in self.csw.getidentifiers(page=10, outputschema=self.output_schema()):
                 try:
                     log.info('Got identifier %s from the CSW', identifier)
                     if identifier is None:
