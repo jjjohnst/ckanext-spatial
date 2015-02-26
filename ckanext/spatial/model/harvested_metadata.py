@@ -241,26 +241,17 @@ class ISOResourceLocator(ISOElement):
         ),
         ]
 
-
-class ISODataFormat(ISOElement):
+class ISOResourceLocatorGroup(ISOElement):
 
     elements = [
-        ISOElement(
-            name="name",
+        ISOResourceLocator(
+            name="resource-locator",
             search_paths=[
-                "gmd:name/gco:CharacterString/text()",
+                "gmd:CI_OnlineResource",
             ],
-            multiplicity="0..1",
+            multiplicity="1..*",
         ),
-        ISOElement(
-            name="version",
-            search_paths=[
-                "gmd:version/gco:CharacterString/text()",
-            ],
-            multiplicity="0..1",
-        ),
-    ]
-
+        ]
 
 class ISOReferenceDate(ISOElement):
 
@@ -427,13 +418,6 @@ class ISODocument(MappedXmlDocument):
                 "gmd:identificationInfo/srv:SV_ServiceIdentification/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString/text()",
             ],
             multiplicity="1",
-        ),
-        ISOElement(
-            name="format",
-            search_paths=[
-                "gmd:distributionInfo/gmd:MD_Distribution/gmd:distributionFormat/gmd:MD_Format/gmd:name/gco:CharacterString/text()",
-            ],
-            multiplicity="0..1",
         ),
         ISOElement(
             name="alternative-title",
@@ -646,18 +630,18 @@ class ISODocument(MappedXmlDocument):
             ],
             multiplicity="0..1",
         ),
-        ISODataFormat(
+        ISOElement(
             name="data-format",
             search_paths=[
-                "gmd:distributionInfo/gmd:MD_Distribution/gmd:distributionFormat/gmd:MD_Format",
+                "gmd:distributionInfo/gmd:MD_Distribution/gmd:distributionFormat/gmd:MD_Format/gmd:name/gco:CharacterString/text()",
             ],
             multiplicity="*",
         ),
-        ISOResourceLocator(
-            name="resource-locator",
+        ISOResourceLocatorGroup(
+            name="resource-locator-group",
             search_paths=[
-                "gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource",
-                "gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorTransferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource"
+                "gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine",
+                "gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorTransferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine"
             ],
             multiplicity="*",
         ),
@@ -753,9 +737,12 @@ class ISODocument(MappedXmlDocument):
 
     def infer_url(self, values):
         value = ''
-        for locator in values['resource-locator']:
-            if locator['function'] == 'information':
-                value = locator['url']
+        for locator_group in values['resource-locator-group']:
+            for locator in locator_group['resource-locator']:
+                if locator['function'] == 'information':
+                    value = locator['url']
+                    break
+            if value:
                 break
         values['url'] = value
 
