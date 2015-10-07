@@ -445,6 +445,9 @@ class SpatialHarvester(HarvesterBase):
             if not is_valid:
                 # If validation errors were found, import will stop unless
                 # configuration per source or per instance says otherwise
+                
+#JJ: How is data.gov configured to handle validation errors here?  This parameter should be set to True in the 
+#configuration file 
                 continue_import = p.toolkit.asbool(config.get('ckanext.spatial.harvest.continue_on_validation_errors', False)) or \
                     self.source_config.get('continue_on_validation_errors')
                 if not continue_import:
