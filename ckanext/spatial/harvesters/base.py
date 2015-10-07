@@ -302,6 +302,7 @@ class SpatialHarvester(HarvesterBase):
                 xmax = float(bbox['east'])
                 ymin = float(bbox['south'])
                 ymax = float(bbox['north'])
+#JJ: On an error here, perhaps we should just set the bounding box to a default (-180, 180, -90, 90)
             except ValueError, e:
                 self._save_object_error('Error parsing bounding box value: {0}'.format(str(e)),
                                     harvest_object, 'Import')
@@ -310,6 +311,8 @@ class SpatialHarvester(HarvesterBase):
 
                 # Some publishers define the same two corners for the bbox (ie a point),
                 # that causes problems in the search if stored as polygon
+#JJ: I agree that this can cause a problem... but would rather include the record in the catalog with a 
+#bounding box of the whole world than reject the record outright.  See suggestion above.
                 if xmin == xmax or ymin == ymax:
                     extent_string = Template('{"type": "Point", "coordinates": [$x, $y]}').substitute(
                         x=xmin, y=ymin
